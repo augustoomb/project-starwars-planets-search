@@ -4,8 +4,11 @@ import operators from '../util/Operators';
 
 function MainPlanets() {
   const { fetchPlanets, data } = useContext(PlanetContext); // pegando do contexto
+  const [columnFilter, setColumnFilter] = useState('population');
+  const [operatorFilter, setOperatorFilter] = useState('maior que');
+  const [numberParam, setnumberParam] = useState(0);
   const [filteredArr, setFilteredArr] = useState([]);
-  const [filteredNumArr, setFilteredNumArr] = useState([]);
+  // const [filteredNumArr, setFilteredNumArr] = useState([]);
   const arrTableHead = ['name', 'rotation_period', 'orbital_period', 'diameter',
     'climate', 'gravity', 'terrain', 'surface_water', 'population', 'films', 'created',
     'edited', 'url'];
@@ -15,7 +18,7 @@ function MainPlanets() {
       await fetchPlanets();
     }
     fetchData();
-  }, []); // TODO: confirmar
+  }, [fetchPlanets]); // TODO: confirmar //fetchPlanets
 
   // filtro para o campo de busca por nome
   const filterList = (searchValue) => {
@@ -29,25 +32,33 @@ function MainPlanets() {
   };
 
   // filtro para os campos de filtro numérico
-  const numericFilter = (filterColumn, filterOperator, numberParam) => {
-    // console.log(filterColumn);
-    // console.log(filterOperator);
-    // console.log(numberParam);
-
+  const numericFilter = () => {
     // const filtered = data.filter((planet) => eval(operators(planet, filterColumn, filterOperator, numberParam)));
-    const filtered = data.filter((planet) => operators(planet, filterColumn, filterOperator, numberParam));
+    const filtered = data.filter(
+      (planet) => operators(planet, columnFilter, operatorFilter, numberParam),
+    );
 
-    setFilteredNumArr(filtered);
+    // setFilteredNumArr(filtered);
+    setFilteredArr(filtered);
   };
 
   // submit para os filtros numéricos
-  const handleFormSubmit = (event) => {
-    event.preventDefault();
-    const filterColumn = event.target.filterColumn.value;
-    const filterOperator = event.target.filterOperator.value;
-    const numberParam = event.target.numberParam.value;
+  const handleFormChange = (event) => {
+    // event.preventDefault();
+    // const filterColumn = event.target.filterColumn.value;
+    // const filterOperator = event.target.filterOperator.value;
+    // const numberParam = event.target.numberParam.value;
 
-    numericFilter(filterColumn, filterOperator, numberParam);
+    // numericFilter(filterColumn, filterOperator, numberParam);
+    if (event.target.name === 'columnFilter') {
+      setColumnFilter(event.target.value);
+    }
+    if (event.target.name === 'operatorFilter') {
+      setOperatorFilter(event.target.value);
+    }
+    if (event.target.name === 'numberParam') {
+      setnumberParam(event.target.value);
+    }
   };
 
   return (
@@ -57,12 +68,14 @@ function MainPlanets() {
         onChange={ handleChange }
         data-testid="name-filter"
       />
-      <form onSubmit={ handleFormSubmit }>
-        <label htmlFor="filterColumn" className="label">
+      <form>
+        <label htmlFor="columnFilter" className="label">
           Coluna:
           <select
-            id="filterColumn"
+            name="columnFilter"
             data-testid="column-filter"
+            onChange={ handleFormChange }
+            value={ columnFilter }
           >
             <option selected value="population">population</option>
             <option value="orbital_period">orbital_period</option>
@@ -71,11 +84,13 @@ function MainPlanets() {
             <option value="surface_water">surface_water</option>
           </select>
         </label>
-        <label htmlFor="filterOperator" className="label">
+        <label htmlFor="operatorFilter" className="label">
           Operador:
           <select
-            id="filterOperator"
+            name="operatorFilter"
             data-testid="comparison-filter"
+            onChange={ handleFormChange }
+            value={ operatorFilter }
           >
             <option selected value="maior que">maior que</option>
             <option value="menor que">menor que</option>
@@ -83,11 +98,15 @@ function MainPlanets() {
           </select>
         </label>
         <input
-          id="numberParam"
+          name="numberParam"
           data-testid="value-filter"
+          onChange={ handleFormChange }
           type="number"
+          value={ numberParam }
         />
-        <button type="submit" data-testid="button-filter">Filtrar</button>
+        <button type="button" data-testid="button-filter" onClick={ numericFilter }>
+          Filtrar
+        </button>
       </form>
       {
         // data && (filteredArr === undefined || filteredArr.length === 0)
@@ -102,9 +121,8 @@ function MainPlanets() {
                 }
               </tr>
               {
-                // data.map((planet) => (
-                // (filteredArr.length > 0 ? filteredArr : data).map((planet) => (
-                (filteredNumArr.length > 0 ? filteredNumArr : filteredArr.length > 0 ? filteredArr : data).map((planet) => (
+                // (filteredNumArr.length > 0 ? filteredNumArr : filteredArr.length > 0 ? filteredArr : data).map((planet) => (
+                (filteredArr.length > 0 ? filteredArr : data).map((planet) => (
                   <tr key={ planet.name }>
                     <td>{ planet.name }</td>
                     <td>{ planet.rotation_period }</td>

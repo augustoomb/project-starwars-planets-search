@@ -14,14 +14,14 @@
 
 const operators = (planet, filterColumn, filterOperator, numberParam) => {
   if (filterOperator === 'maior que') {
-    return parseInt(planet[filterColumn]) > parseInt(numberParam);
+    return parseInt(planet[filterColumn], 10) > parseInt(numberParam, 10);
   }
 
   if (filterOperator === 'menor que') {
-    return parseInt(planet[filterColumn]) < parseInt(numberParam);
+    return parseInt(planet[filterColumn], 10) < parseInt(numberParam, 10);
   }
 
-  return parseInt(planet[filterColumn]) === parseInt(numberParam);
+  return parseInt(planet[filterColumn], 10) === parseInt(numberParam, 10);
 };
 
 export default operators;
