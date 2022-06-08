@@ -8,7 +8,6 @@ function MainPlanets() {
   const [operatorFilter, setOperatorFilter] = useState('maior que');
   const [numberParam, setnumberParam] = useState(0);
   const [filteredArr, setFilteredArr] = useState([]);
-  // const [filteredNumArr, setFilteredNumArr] = useState([]);
   const arrTableHead = ['name', 'rotation_period', 'orbital_period', 'diameter',
     'climate', 'gravity', 'terrain', 'surface_water', 'population', 'films', 'created',
     'edited', 'url'];
@@ -33,23 +32,23 @@ function MainPlanets() {
 
   // filtro para os campos de filtro numérico
   const numericFilter = () => {
-    // const filtered = data.filter((planet) => eval(operators(planet, filterColumn, filterOperator, numberParam)));
-    const filtered = data.filter(
-      (planet) => operators(planet, columnFilter, operatorFilter, numberParam),
-    );
+    if (filteredArr.length === 0) {
+      const filtered = data.filter(
+        (planet) => operators(planet, columnFilter, operatorFilter, numberParam),
+      );
+      setFilteredArr(filtered);
+    }
 
-    // setFilteredNumArr(filtered);
-    setFilteredArr(filtered);
+    if (filteredArr.length > 0) {
+      const filtered = filteredArr.filter(
+        (planet) => operators(planet, columnFilter, operatorFilter, numberParam),
+      );
+      setFilteredArr(filtered);
+    }
   };
 
   // submit para os filtros numéricos
   const handleFormChange = (event) => {
-    // event.preventDefault();
-    // const filterColumn = event.target.filterColumn.value;
-    // const filterOperator = event.target.filterOperator.value;
-    // const numberParam = event.target.numberParam.value;
-
-    // numericFilter(filterColumn, filterOperator, numberParam);
     if (event.target.name === 'columnFilter') {
       setColumnFilter(event.target.value);
     }
@@ -121,7 +120,6 @@ function MainPlanets() {
                 }
               </tr>
               {
-                // (filteredNumArr.length > 0 ? filteredNumArr : filteredArr.length > 0 ? filteredArr : data).map((planet) => (
                 (filteredArr.length > 0 ? filteredArr : data).map((planet) => (
                   <tr key={ planet.name }>
                     <td>{ planet.name }</td>
