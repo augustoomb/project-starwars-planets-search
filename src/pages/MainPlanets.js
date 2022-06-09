@@ -8,9 +8,15 @@ function MainPlanets() {
   const [operatorFilter, setOperatorFilter] = useState('maior que');
   const [numberParam, setnumberParam] = useState(0);
   const [filteredArr, setFilteredArr] = useState([]);
+
+  const [excludedOptions, setExcludedOptions] = useState([]);
+
   const arrTableHead = ['name', 'rotation_period', 'orbital_period', 'diameter',
     'climate', 'gravity', 'terrain', 'surface_water', 'population', 'films', 'created',
     'edited', 'url'];
+
+  const optionsColumn = ['population', 'orbital_period', 'diameter',
+    'rotation_period', 'surface_water'];
 
   useEffect(() => {
     async function fetchData() {
@@ -32,6 +38,8 @@ function MainPlanets() {
 
   // filtro para os campos de filtro numérico
   const numericFilter = () => {
+    setExcludedOptions((prevState) => [...prevState, columnFilter]);
+
     if (filteredArr.length === 0) {
       const filtered = data.filter(
         (planet) => operators(planet, columnFilter, operatorFilter, numberParam),
@@ -76,11 +84,17 @@ function MainPlanets() {
             onChange={ handleFormChange }
             value={ columnFilter }
           >
-            <option selected value="population">population</option>
+            {/* <option value="population">population</option>
             <option value="orbital_period">orbital_period</option>
             <option value="diameter">diameter</option>
             <option value="rotation_period">rotation_period</option>
-            <option value="surface_water">surface_water</option>
+            <option value="surface_water">surface_water</option> */}
+            {
+              (optionsColumn.filter((item) => !excludedOptions.includes(item)))
+                .map((option) => (
+                  <option key={ option } value={ option }>{ option }</option>
+                ))
+            }
           </select>
         </label>
         <label htmlFor="operatorFilter" className="label">
@@ -91,7 +105,7 @@ function MainPlanets() {
             onChange={ handleFormChange }
             value={ operatorFilter }
           >
-            <option selected value="maior que">maior que</option>
+            <option value="maior que">maior que</option>
             <option value="menor que">menor que</option>
             <option value="igual a">igual a</option>
           </select>
